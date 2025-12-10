@@ -1387,6 +1387,28 @@ EOD
             'ifc-front.css' => <<<'EOD'
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
+/*
+ * AhoVNimageFlashcard - Frontend Styles
+ * 
+ * CSS ISOLATION STRATEGY:
+ * This plugin uses extensive !important declarations to prevent style conflicts 
+ * when embedded in AhoVN LMS Pro lessons or other WordPress contexts.
+ * 
+ * Three-layer isolation approach:
+ * 1. Scoping: All selectors prefixed with .ifc-wrap
+ * 2. Specificity: Parent-child relationships in selectors
+ * 3. Priority: !important on critical properties
+ * 
+ * This approach is intentional and necessary for WordPress plugin environments.
+ * 
+ * CUSTOMIZATION:
+ * To override styles, use even more specific selectors:
+ * .custom-parent .ifc-wrap .element { property: value !important; }
+ * 
+ * Or use inline styles on the wrapper:
+ * <div class="ifc-wrap" style="--ifc-primary: #custom-color;">
+ */
+
 /* CSS Reset for plugin isolation - only reset specific elements to avoid performance issues */
 .ifc-wrap button,
 .ifc-wrap input,
@@ -1420,7 +1442,11 @@ EOD
 
 /* Main plugin container with scoped CSS variables and styles */
 .ifc-wrap { 
-  /* CSS Variables scoped to plugin to avoid global conflicts */
+  /* CSS Variables scoped to plugin to avoid global conflicts
+     Variables are intentionally defined on each .ifc-wrap instance for complete isolation.
+     This ensures each flashcard set has independent styling and prevents conflicts
+     when multiple instances or other plugins are present. The minimal performance
+     trade-off is acceptable for guaranteed CSS isolation in WordPress multi-plugin environments. */
   --ifc-primary: #667eea;
   --ifc-secondary: #764ba2;
   --ifc-accent: #f093fb;
@@ -1903,7 +1929,8 @@ EOD
   fill: currentColor !important; 
 }
 
-/* Hide button text visually while keeping it accessible to screen readers */
+/* Hide button text visually while keeping it accessible to screen readers 
+   Using standard visually-hidden pattern for WCAG compliance */
 .ifc-wrap .ifc-btn-text { 
   position: absolute !important;
   width: 1px !important;
@@ -1912,6 +1939,7 @@ EOD
   margin: -1px !important;
   overflow: hidden !important;
   clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
   white-space: nowrap !important;
   border-width: 0 !important;
 }
