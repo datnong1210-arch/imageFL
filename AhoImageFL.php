@@ -1903,8 +1903,17 @@ EOD
   fill: currentColor !important; 
 }
 
+/* Hide button text visually while keeping it accessible to screen readers */
 .ifc-wrap .ifc-btn-text { 
-  display: none !important; 
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
 }
 
 .ifc-wrap .ifc-prev, 
