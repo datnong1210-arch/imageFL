@@ -821,9 +821,10 @@ EOD
                 <span class="ifc-progress-counter"><span data-lang="cardCounter">Thẻ</span>: <span class="curr">1</span>/<span class="total"><?= count($cards) ?></span></span>
             </div>
              <div class="ifc-shuffle-control">
-                <label>
+                <label title="Đảo thứ tự">
                     <input type="checkbox" class="ifc-shuffle-checkbox">
-                    <span data-lang="shuffleOrder">Đảo</span>
+                    <svg viewBox="0 0 24 24" width="20" height="20" style="fill: currentColor; vertical-align: middle;"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+                    <span class="ifc-btn-text" data-lang="shuffleOrder">Đảo</span>
                 </label>
             </div>
         </div>
@@ -848,23 +849,24 @@ EOD
             </div>
         </div>
         <div class="ifc-nav-btns">
-            <button class="ifc-btn ifc-prev">
+            <button class="ifc-btn ifc-prev" title="Trước (←)">
                 <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                <span data-lang="prevCard">Trước</span>
+                <span class="ifc-btn-text" data-lang="prevCard">Trước</span>
             </button>
-            <button class="ifc-btn ifc-flip">
+            <button class="ifc-btn ifc-flip" title="Lật (Space)">
                 <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
-                <span data-lang="flipCard">Lật</span>
+                <span class="ifc-btn-text" data-lang="flipCard">Lật</span>
             </button>
-            <button class="ifc-btn ifc-next">
-                <span data-lang="nextCard">Sau</span>
+            <button class="ifc-btn ifc-next" title="Sau (→)">
                 <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+                <span class="ifc-btn-text" data-lang="nextCard">Sau</span>
             </button>
         </div>
+        <div class="ifc-keyboard-hint">Phím tắt: Space=lật thẻ, ←/→=Thẻ trước/Sau</div>
         <div class="ifc-mode-switcher">
-            <button class="ifc-btn ifc-quiz">
+            <button class="ifc-btn ifc-quiz" title="Chơi Quiz">
                 <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-                <span data-lang="playQuiz">Chơi Quiz</span>
+                <span class="ifc-btn-text" data-lang="playQuiz">Chơi Quiz</span>
             </button>
         </div>
     </div>
@@ -872,9 +874,9 @@ EOD
         <div class="ifc-quiz-header">
             <div class="ifc-quiz-progress"><span data-lang="questionCounter">Câu</span>: <span class="quiz-curr">1</span>/<span class="quiz-total">0</span></div>
             <div class="ifc-quiz-filter-wrap">
-                <button class="ifc-btn ifc-quiz-filter-toggle">
+                <button class="ifc-btn ifc-quiz-filter-toggle" title="Ẩn/Hiện các mặt sau">
                     <svg viewBox="0 0 24 24"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
-                    <span data-lang="filter">Ẩn</span>
+                    <span class="ifc-btn-text" data-lang="filter">Ẩn</span>
                 </button>
                 <div class="ifc-quiz-filter-options" style="display: none;">
                     <label><input type="checkbox" name="back_filter" value="back1" checked> <span data-lang="showBack1">Hiện mặt sau 1</span></label>
@@ -883,16 +885,16 @@ EOD
                     <label><input type="checkbox" name="back_filter" value="back4"> <span data-lang="showBack4">Hiện mặt sau 4</span></label>
                 </div>
             </div>
-            <button class="ifc-btn ifc-quiz-exit">
+            <button class="ifc-btn ifc-quiz-exit" title="Thoát Quiz">
                 <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                <span data-lang="exit">Thoát</span>
+                <span class="ifc-btn-text" data-lang="exit">Thoát</span>
             </button>
         </div>
         <div class="ifc-quiz-question"></div>
         <div class="ifc-quiz-options"></div>
-        <button class="ifc-btn ifc-quiz-next" style="display:none;">
-             <span data-lang="nextQuestion">Câu tiếp</span>
+        <button class="ifc-btn ifc-quiz-next" style="display:none;" title="Câu tiếp theo">
              <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+             <span class="ifc-btn-text" data-lang="nextQuestion">Câu tiếp</span>
         </button>
     </div>
     <div class="ifc-quiz-results" style="display:none;">
@@ -913,13 +915,13 @@ EOD
             <span class="star-count">0</span>
         </div>
         <div class="ifc-results-actions">
-            <button class="ifc-btn ifc-quiz-restart">
+            <button class="ifc-btn ifc-quiz-restart" title="Làm lại Quiz">
                  <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                <span data-lang="retryQuiz">Làm lại Quiz</span>
+                <span class="ifc-btn-text" data-lang="retryQuiz">Làm lại Quiz</span>
             </button>
-            <button class="ifc-btn ifc-back-flashcard">
+            <button class="ifc-btn ifc-back-flashcard" title="Quay lại học">
                 <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-                <span data-lang="backToStudy">Quay lại học</span>
+                <span class="ifc-btn-text" data-lang="backToStudy">Quay lại học</span>
             </button>
         </div>
     </div>
@@ -1050,7 +1052,9 @@ EOD
             let html = '';
             for (let i = 1; i <= 4; i++) {
                 if (card['back' + i]) {
-                    html += `<div class="ifc-back-row">${createAudioButton(card['back' + i + '_audio'])}<span>${card['back' + i]}</span></div>`;
+                    const audioUrl = card['back' + i + '_audio'];
+                    const audioBtn = (audioUrl && isUrl(audioUrl)) ? createAudioButton(audioUrl) : '';
+                    html += `<div class="ifc-back-row">${audioBtn}<span>${card['back' + i]}</span></div>`;
                 }
             }
             return html;
@@ -1065,10 +1069,14 @@ EOD
             return checkedFilters.map(filterKey => card[filterKey]).filter(Boolean).join(" / ");
         }
 
-        function playSound(audioEl) {
+        function playSound(audioEl, buttonEl) {
             if (audioEl) {
                 audioEl.currentTime = 0;
+                if (buttonEl) buttonEl.classList.add('playing');
                 audioEl.play().catch(e => console.error("Audio play failed:", e));
+                audioEl.onended = () => {
+                    if (buttonEl) buttonEl.classList.remove('playing');
+                };
             }
         }
 
@@ -1106,8 +1114,8 @@ EOD
             if (mainAudioBtn) {
                 const audioEl = document.getElementById(mainAudioBtn.dataset.audioId);
                 if (audioEl) {
-                    mainAudioBtn.onclick = (e) => { e.stopPropagation(); playSound(audioEl); };
-                    setTimeout(() => playSound(audioEl), 300);
+                    mainAudioBtn.onclick = (e) => { e.stopPropagation(); playSound(audioEl, mainAudioBtn); };
+                    setTimeout(() => playSound(audioEl, mainAudioBtn), 300);
                 }
             }
         }
@@ -1175,8 +1183,8 @@ EOD
             if (audioBtn) {
                 const audioEl = document.getElementById(audioBtn.dataset.audioId);
                 if (audioEl) {
-                    audioBtn.onclick = (e) => { e.stopPropagation(); playSound(audioEl); };
-                    setTimeout(() => playSound(audioEl), 300);
+                    audioBtn.onclick = (e) => { e.stopPropagation(); playSound(audioEl, audioBtn); };
+                    setTimeout(() => playSound(audioEl, audioBtn), 300);
                 }
             }
         }
@@ -1268,7 +1276,7 @@ EOD
             const audioBtn = e.target.closest('.ifc-audio-play-btn');
             if (audioBtn) {
                 const audioEl = document.getElementById(audioBtn.dataset.audioId);
-                if (audioEl) playSound(audioEl);
+                if (audioEl) playSound(audioEl, audioBtn);
             }
         });
         
@@ -1525,11 +1533,21 @@ EOD
 
 .ifc-audio-play-btn svg { width: 26px; height: 26px; fill: #fff; margin-left: 4px; }
 
+.ifc-audio-play-btn.playing {
+  animation: audio-pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(251, 191, 36, 0.6);
+}
+
+@keyframes audio-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
+  50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(251, 191, 36, 0.9), 0 0 50px rgba(251, 191, 36, 0.7); }
+}
+
 .ifc-back-content { align-items: center; justify-content: center; }
 
 .ifc-back-content .ifc-back-row { 
-  display: flex; align-items: center; justify-content: center; width: 95%; 
-  margin: 8px 0; font-size: 20px; gap: 15px; animation: slide-in 0.5s ease-out;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; width: 95%; 
+  margin: 8px 0; font-size: 20px; gap: 10px; animation: slide-in 0.5s ease-out;
 }
 
 @keyframes slide-in {
@@ -1537,7 +1555,7 @@ EOD
   to { opacity: 1; transform: translateX(0); }
 }
 
-.ifc-back-content .ifc-back-row span { flex-grow: 1; text-align: left; font-weight: 600; }
+.ifc-back-content .ifc-back-row span { flex-grow: 1; text-align: center; font-weight: 600; }
 
 .ifc-main-content { display: flex; flex-direction: column; position: relative; z-index: 1; }
 
@@ -1589,6 +1607,8 @@ EOD
 
 .ifc-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
+.ifc-btn-text { display: none; }
+
 .ifc-prev, .ifc-next { 
   background: linear-gradient(135deg, #3b82f6, #2563eb); 
   color: white; border: 1px solid rgba(59, 130, 246, 0.3);
@@ -1614,6 +1634,11 @@ EOD
 .ifc-quiz-next { 
   background: linear-gradient(135deg, var(--ifc-success), #22c55e); 
   color: white; border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.ifc-keyboard-hint { 
+  text-align: center; margin-top: 12px; font-size: 12px; color: rgba(255, 255, 255, 0.6); 
+  opacity: 0.7; font-weight: 400; letter-spacing: 0.3px;
 }
 
 .ifc-mode-switcher { text-align: center; margin-top: 20px; flex-shrink: 0; }
