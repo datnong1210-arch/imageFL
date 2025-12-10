@@ -1052,8 +1052,10 @@ EOD
             let html = '';
             for (let i = 1; i <= 4; i++) {
                 if (card['back' + i]) {
+                    // Check each back face's audio URL individually to only show icon when URL exists
                     const audioUrl = card['back' + i + '_audio'];
                     const audioBtn = (audioUrl && isUrl(audioUrl)) ? createAudioButton(audioUrl) : '';
+                    // Audio icon appears above text (flex-direction: column in CSS)
                     html += `<div class="ifc-back-row">${audioBtn}<span>${card['back' + i]}</span></div>`;
                 }
             }
