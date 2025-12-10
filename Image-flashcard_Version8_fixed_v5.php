@@ -954,7 +954,8 @@ EOD
             confettiContainer.appendChild(piece);
         }
         
-        setTimeout(() => confettiContainer.remove(), 4000);
+        const duration = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ifc-confetti-duration')) || 4000;
+        setTimeout(() => confettiContainer.remove(), duration);
     }
     
     function triggerConfetti(element, size = 'small') {
@@ -1336,6 +1337,8 @@ EOD
             'ifc-front.css' => <<<'EOD'
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
+* { scroll-behavior: smooth; }
+
 :root {
   --ifc-primary: #667eea;
   --ifc-secondary: #764ba2;
@@ -1350,9 +1353,8 @@ EOD
   --ifc-radius-sm: 16px;
   --ifc-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   --ifc-shadow-hover: 0 15px 40px rgba(31, 38, 135, 0.25);
+  --ifc-confetti-duration: 4000ms;
 }
-
-* { scroll-behavior: smooth; }
 
 .ifc-wrap { 
   max-width: 550px; margin: 30px auto; padding: 25px; font-family: 'Poppins', sans-serif; 
@@ -1397,7 +1399,9 @@ EOD
 .ifc-lang-switcher:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
 
 .ifc-progress, .ifc-star-counter, .ifc-shuffle-control { 
-  display: flex; align-items: center; background: var(--ifc-glass-bg); 
+  display: flex; align-items: center; 
+  background: rgba(255, 255, 255, 0.15);
+  background: var(--ifc-glass-bg); 
   backdrop-filter: blur(var(--ifc-blur)); -webkit-backdrop-filter: blur(var(--ifc-blur));
   padding: 8px 16px; border-radius: var(--ifc-radius); font-size: 15px; font-weight: 600; 
   color: #fff; box-shadow: var(--ifc-shadow); border: 1px solid var(--ifc-glass-border);
@@ -1451,6 +1455,7 @@ EOD
   border-radius: var(--ifc-radius); 
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1);
   font-size: 24px; text-align: center; padding: 20px; overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
   background: var(--ifc-glass-bg); backdrop-filter: blur(15px); 
   -webkit-backdrop-filter: blur(15px); border: 1px solid var(--ifc-glass-border);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -1548,6 +1553,7 @@ EOD
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
   font-family: 'Poppins', sans-serif; 
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); 
+  background: rgba(255, 255, 255, 0.15);
   background: var(--ifc-glass-bg); backdrop-filter: blur(var(--ifc-blur)); 
   -webkit-backdrop-filter: blur(var(--ifc-blur)); 
   border: 1px solid var(--ifc-glass-border); color: #fff;
@@ -1863,8 +1869,8 @@ EOD
 }
 
 @keyframes confetti-fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate3d(0, 1000px, 0) rotate(720deg); opacity: 0; }
 }
 
 @media(max-width: 500px) { 
