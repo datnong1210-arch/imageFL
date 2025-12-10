@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AhoVNimageFlashcard
  * Description: Plugin học Flashcard bằng hình ảnh với giao diện thân thiện cho trẻ em, có hệ thống thưởng sao và nhiều hiệu ứng sinh động. Hoạt động độc lập với AhoFLASHCARD.
- * Version: 26.5.3
+ * Version: 26.6.0
  * Author: AhoVN & Copilot (UI/UX Refinements, Feature Expansion)
  */
 
@@ -12,7 +12,7 @@ class ImageFlashcardLearning {
     private $table_name;
     private $option_name = 'ifc_options';
     private $lang_option_name = 'ifc_language_packs';
-    private $version = '26.5.3';
+    private $version = '26.6.0';
     
     public function __construct() {
         global $wpdb;
@@ -80,6 +80,7 @@ class ImageFlashcardLearning {
             'showBack2' => 'Hiện mặt sau 2',
             'showBack3' => 'Hiện mặt sau 3',
             'showBack4' => 'Hiện mặt sau 4',
+            'showBackOnFront' => 'Hiện mặt sau',
             'nextQuestion' => 'Câu tiếp',
             'quizComplete' => 'Hoàn thành Quiz!',
             'correct' => 'ĐÚNG',
@@ -820,17 +821,14 @@ EOD
             <div class="ifc-progress">
                 <span class="ifc-progress-counter"><span data-lang="cardCounter">Thẻ</span>: <span class="curr">1</span>/<span class="total"><?= count($cards) ?></span></span>
             </div>
-             <div class="ifc-shuffle-control">
-                <label title="Đảo thứ tự">
-                    <input type="checkbox" class="ifc-shuffle-checkbox">
-                    <svg viewBox="0 0 24 24" width="20" height="20" style="fill: currentColor; vertical-align: middle;"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
-                    <span class="ifc-btn-text" data-lang="shuffleOrder">Đảo</span>
-                </label>
-            </div>
-        </div>
-        <div class="ifc-star-counter" style="display: none;">
-            <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            <span class="star-count">0</span>
+             <button class="ifc-btn ifc-shuffle-btn" title="Đảo thứ tự">
+                <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+                <span class="ifc-btn-text" data-lang="shuffleOrder">Đảo</span>
+            </button>
+            <button class="ifc-btn ifc-show-back-toggle" title="Hiện mặt sau">
+                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <span class="ifc-btn-text" data-lang="showBackOnFront">Hiện mặt sau</span>
+            </button>
         </div>
     </div>
     <div class="ifc-main-content" style="display: none;">
@@ -840,6 +838,7 @@ EOD
                     <div class="ifc-content-wrapper">
                         <div class="ifc-image-container"></div>
                         <div class="ifc-audio-container"></div>
+                        <div class="ifc-back1-preview" style="display: none;"></div>
                         <div class="ifc-text-content"></div>
                     </div>
                 </div>
@@ -861,14 +860,12 @@ EOD
                 <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
                 <span class="ifc-btn-text" data-lang="nextCard">Sau</span>
             </button>
-        </div>
-        <div class="ifc-keyboard-hint">Phím tắt: Space=lật thẻ, ←/→=Thẻ trước/Sau</div>
-        <div class="ifc-mode-switcher">
             <button class="ifc-btn ifc-quiz" title="Chơi Quiz">
                 <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-                <span class="ifc-btn-text" data-lang="playQuiz">Chơi Quiz</span>
+                <span class="ifc-btn-text" data-lang="playQuiz">Quiz</span>
             </button>
         </div>
+        <div class="ifc-keyboard-hint">Phím tắt: Space=lật thẻ, ←/→=Thẻ trước/Sau</div>
     </div>
     <div class="ifc-quiz-mode" style="display:none;">
         <div class="ifc-quiz-header">
@@ -908,11 +905,6 @@ EOD
                 <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
                 <span class="cnt-quiz-wrong">0</span> <span data-lang="wrong">SAI</span>
             </div>
-        </div>
-        <div class="ifc-final-stars">
-            <span data-lang="totalStars">Tổng số sao</span>: 
-            <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-            <span class="star-count">0</span>
         </div>
         <div class="ifc-results-actions">
             <button class="ifc-btn ifc-quiz-restart" title="Làm lại Quiz">
@@ -966,7 +958,7 @@ EOD
     }
 
     document.querySelectorAll(".ifc-wrap").forEach(function (w) {
-        let originalCards = JSON.parse(w.dataset.cards), cards, idx, isFlipped, quizMode, quizIdx, quizAnswered, quizCorrect, quizWrong, starCount = 0, firstTry;
+        let originalCards = JSON.parse(w.dataset.cards), cards, idx, isFlipped, quizMode, quizIdx, quizAnswered, quizCorrect, quizWrong, starCount = 0, firstTry, isShuffled = false, showBackOnFront = false;
         const options = ifcFrontData.options || {};
         const langPacks = ifcFrontData.langPacks || {};
         let currentLang = localStorage.getItem('ifc_lang') || Object.keys(langPacks)[0] || 'vi';
@@ -977,12 +969,12 @@ EOD
             imgCont = w.querySelector(".ifc-image-container"),
             audioCont = w.querySelector(".ifc-audio-container"),
             frontTxt = w.querySelector(".ifc-text-content"),
+            back1Preview = w.querySelector(".ifc-back1-preview"),
             progCtr = w.querySelector(".ifc-progress-counter"),
             curr = w.querySelector(".curr"),
             total = w.querySelector(".total"),
-            shuffleCheckbox = w.querySelector(".ifc-shuffle-checkbox"),
-            starCounter = w.querySelector(".ifc-star-counter"),
-            starCountSpans = w.querySelectorAll(".star-count"),
+            btnShuffle = w.querySelector(".ifc-shuffle-btn"),
+            btnShowBackToggle = w.querySelector(".ifc-show-back-toggle"),
             btnPrev = w.querySelector(".ifc-prev"),
             btnNext = w.querySelector(".ifc-next"),
             btnFlip = w.querySelector(".ifc-flip"),
@@ -1087,12 +1079,14 @@ EOD
             let card = cards[i];
             let frontContent = card.front || "";
             
-            imgCont.innerHTML = ""; audioCont.innerHTML = ""; frontTxt.innerHTML = "";
+            imgCont.innerHTML = ""; audioCont.innerHTML = ""; frontTxt.innerHTML = ""; back1Preview.innerHTML = "";
             backContentEl.innerHTML = getBackContentHTML(card);
             
+            let isImageFront = false;
             if (isUrl(frontContent)) {
                 if (/\.(jpeg|jpg|gif|png|svg|webp)(\?.*)?$/i.test(frontContent)) {
                     imgCont.innerHTML = `<img src="${frontContent}" alt="">`;
+                    isImageFront = true;
                 } else if (/\.(mp3|wav|ogg)(\?.*)?$/i.test(frontContent)) {
                     audioCont.innerHTML = createAudioButton(frontContent);
                 } else {
@@ -1100,6 +1094,14 @@ EOD
                 }
             } else {
                 frontTxt.innerHTML = `<span>${frontContent.replace(/\\n/g, "<br>")}</span>`;
+            }
+            
+            // Show back1 preview if enabled and front is image
+            if (showBackOnFront && isImageFront && card.back1) {
+                back1Preview.innerHTML = `<span>${card.back1}</span>`;
+                back1Preview.style.display = "block";
+            } else {
+                back1Preview.style.display = "none";
             }
             
             if (frontTxt.innerHTML.trim() === '') {
@@ -1125,10 +1127,10 @@ EOD
         function startLearn(cardSet) {
             w.scrollIntoView({ behavior: "smooth", block: "start" });
             idx = 0;
-            cards = shuffleCheckbox.checked ? shuffle([].concat(cardSet)) : [].concat(cardSet);
+            cards = isShuffled ? shuffle([].concat(cardSet)) : [].concat(cardSet);
             quizMode = false;
             quizResults.style.display = "none"; mainContent.style.display = "flex"; quizDiv.style.display = "none";
-            starCounter.style.display = "none"; w.querySelector('.ifc-progress').style.display = "flex";
+            w.querySelector('.ifc-progress').style.display = "flex";
             showCard(idx);
         }
 
@@ -1137,10 +1139,9 @@ EOD
             const validCards = cardSet.filter(c => c && getFilteredBackContentText(c).trim() !== "");
             if (validCards.length < 4) { alert(i18n('notEnoughCards')); return; }
             quizMode = true; quizIdx = 0; quizCorrect = []; quizWrong = []; starCount = 0;
-            updateStarDisplay();
-            cards = shuffleCheckbox.checked ? shuffle([].concat(validCards)) : [].concat(validCards);
+            cards = isShuffled ? shuffle([].concat(validCards)) : [].concat(validCards);
             mainContent.style.display = "none"; quizDiv.style.display = "flex"; quizResults.style.display = "none";
-            starCounter.style.display = "flex"; w.querySelector('.ifc-progress').style.display = "none";
+            w.querySelector('.ifc-progress').style.display = "none";
             quizTotal.textContent = cards.length;
             showQuiz();
         }
@@ -1191,16 +1192,6 @@ EOD
             }
         }
         
-        function updateStarDisplay(animate = false) { 
-            starCountSpans.forEach(span => span.textContent = starCount); 
-            if (animate) {
-                starCounter.classList.remove('star-gained');
-                void starCounter.offsetWidth;
-                starCounter.classList.add('star-gained');
-                setTimeout(() => starCounter.classList.remove('star-gained'), 500);
-            }
-        }
-
         function showResultPopup(isCorrect) {
             const iconEl = resultPopup.querySelector('.ifc-result-popup-icon');
             resultPopup.classList.remove('correct', 'wrong');
@@ -1236,10 +1227,8 @@ EOD
                 if (firstTry) {
                     quizCorrect.push(card);
                     starCount++;
-                    updateStarDisplay(true);
                 } else {
                     if (!quizWrong.includes(card)) quizWrong.push(card);
-                    updateStarDisplay(false);
                 }
                 setTimeout(() => { btnQNext.style.display = "inline-flex"; }, 300);
             } else {
@@ -1247,14 +1236,13 @@ EOD
                 btn.disabled = true;
                 if(firstTry) {
                    starCount = Math.max(0, starCount - 1);
-                   updateStarDisplay();
                 }
                 firstTry = false;
             }
         }
 
         function showQuizResults() {
-            quizDiv.style.display = "none"; quizResults.style.display = "block"; starCounter.style.display = "none";
+            quizDiv.style.display = "none"; quizResults.style.display = "block";
             w.querySelector(".cnt-quiz-correct").textContent = quizCorrect.length;
             w.querySelector(".cnt-quiz-wrong").textContent = quizWrong.length;
             triggerConfetti(w, 'large');
@@ -1291,9 +1279,29 @@ EOD
         btnQExit.onclick = exitQuiz;
         btnQRestart.onclick = () => startQuiz(originalCards);
         btnBackFC.onclick = exitQuiz;
-        if(shuffleCheckbox) {
-            shuffleCheckbox.addEventListener('change', () => {
+        
+        if(btnShuffle) {
+            btnShuffle.addEventListener('click', () => {
+                isShuffled = !isShuffled;
+                if (isShuffled) {
+                    btnShuffle.classList.add('active');
+                } else {
+                    btnShuffle.classList.remove('active');
+                }
+                idx = 0;
                 startLearn(originalCards);
+            });
+        }
+        
+        if(btnShowBackToggle) {
+            btnShowBackToggle.addEventListener('click', () => {
+                showBackOnFront = !showBackOnFront;
+                if (showBackOnFront) {
+                    btnShowBackToggle.classList.add('active');
+                } else {
+                    btnShowBackToggle.classList.remove('active');
+                }
+                showCard(idx);
             });
         }
         if (quizFilterToggle) {
@@ -1408,7 +1416,7 @@ EOD
 
 .ifc-lang-switcher:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
 
-.ifc-progress, .ifc-star-counter, .ifc-shuffle-control { 
+.ifc-progress { 
   display: flex; align-items: center; 
   background: rgba(255, 255, 255, 0.15);
   background: var(--ifc-glass-bg); 
@@ -1418,34 +1426,26 @@ EOD
   transition: all 0.3s ease;
 }
 
-.ifc-progress:hover, .ifc-star-counter:hover, .ifc-shuffle-control:hover {
+.ifc-progress:hover {
   background: rgba(255, 255, 255, 0.25); transform: translateY(-2px);
 }
 
-.ifc-shuffle-control label { 
-  display: flex; align-items: center; cursor: pointer; gap: 6px; font-size: 14px; font-weight: 600;
+.ifc-shuffle-btn, .ifc-show-back-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  background: var(--ifc-glass-bg);
+  backdrop-filter: blur(var(--ifc-blur)); -webkit-backdrop-filter: blur(var(--ifc-blur));
+  border: 1px solid var(--ifc-glass-border);
+  transition: all 0.3s ease;
 }
 
-.ifc-star-counter { 
-  color: #fff; animation: star-pulse 2s ease-in-out infinite;
+.ifc-shuffle-btn.active, .ifc-show-back-toggle.active {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.4));
+  border-color: rgba(102, 126, 234, 0.6);
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.4);
 }
 
-@keyframes star-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.ifc-star-counter.star-gained { animation: star-pop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-
-@keyframes star-pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
-}
-
-.ifc-star-counter .star-icon { 
-  width: 24px; height: 24px; fill: #fbbf24; margin-right: 5px; 
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+.ifc-shuffle-btn:hover, .ifc-show-back-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .ifc-card { position: relative; perspective: 2000px; width: 100%; height: 350px; margin: 15px 0; }
@@ -1498,6 +1498,20 @@ EOD
 .ifc-image-container img { 
   max-width: 100%; max-height: 100%; border-radius: var(--ifc-radius-sm); 
   object-fit: contain; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ifc-back1-preview {
+  width: 100%; text-align: center; padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--ifc-radius-sm);
+  font-size: 16px; font-weight: 600; color: #fff;
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  margin-top: -5px;
+  animation: slide-in 0.3s ease-out;
+}
+
+.ifc-back1-preview span {
+  display: block; word-break: break-word;
 }
 
 .ifc-text-content { 
@@ -1642,8 +1656,6 @@ EOD
   text-align: center; margin-top: 12px; font-size: 12px; color: rgba(255, 255, 255, 0.6); 
   opacity: 0.7; font-weight: 400; letter-spacing: 0.3px;
 }
-
-.ifc-mode-switcher { text-align: center; margin-top: 20px; flex-shrink: 0; }
 
 .ifc-quiz-mode, .ifc-quiz-results { 
   padding: 20px; position: relative; z-index: 2; display: flex; flex-direction: column;
@@ -1825,12 +1837,6 @@ EOD
 }
 
 .ifc-stat svg { width: 28px; height: 28px; fill: currentColor; }
-
-.ifc-final-stars { 
-  text-align: center; font-size: 28px; font-weight: 700; color: #fff; 
-  margin: 30px 0; display: flex; align-items: center; justify-content: center; gap: 12px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
 
 .ifc-results-actions { 
   display: flex; justify-content: center; gap: 15px; margin-top: 25px; flex-wrap: wrap;
