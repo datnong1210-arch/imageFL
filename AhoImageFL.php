@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AhoVNimageFlashcard
  * Description: Plugin học Flashcard bằng hình ảnh với giao diện thân thiện cho trẻ em, có hệ thống thưởng sao và nhiều hiệu ứng sinh động. Hoạt động độc lập với AhoFLASHCARD.
- * Version: 26.6.0
+ * Version: 26.7.0
  * Author: AhoVN & Copilot (UI/UX Refinements, Feature Expansion)
  */
 
@@ -12,7 +12,7 @@ class ImageFlashcardLearning {
     private $table_name;
     private $option_name = 'ifc_options';
     private $lang_option_name = 'ifc_language_packs';
-    private $version = '26.6.0';
+    private $version = '26.7.0';
     
     public function __construct() {
         global $wpdb;
@@ -821,7 +821,7 @@ EOD
             <div class="ifc-progress">
                 <span class="ifc-progress-counter"><span data-lang="cardCounter">Thẻ</span>: <span class="curr">1</span>/<span class="total"><?= count($cards) ?></span></span>
             </div>
-             <button class="ifc-btn ifc-shuffle-btn" title="Đảo thứ tự">
+            <button class="ifc-btn ifc-shuffle-btn" title="Đảo thứ tự">
                 <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
                 <span class="ifc-btn-text" data-lang="shuffleOrder">Đảo</span>
             </button>
@@ -836,6 +836,7 @@ EOD
             <div class="ifc-inner">
                 <div class="ifc-face ifc-front">
                     <div class="ifc-content-wrapper">
+                        <div class="ifc-front-audio-container"></div>
                         <div class="ifc-image-container"></div>
                         <div class="ifc-audio-container"></div>
                         <div class="ifc-back1-preview" style="display: none;"></div>
@@ -966,6 +967,7 @@ EOD
         const mainContent = w.querySelector(".ifc-main-content"),
             inner = w.querySelector(".ifc-inner"),
             backContentEl = w.querySelector(".ifc-back-content"),
+            frontAudioCont = w.querySelector(".ifc-front-audio-container"),
             imgCont = w.querySelector(".ifc-image-container"),
             audioCont = w.querySelector(".ifc-audio-container"),
             frontTxt = w.querySelector(".ifc-text-content"),
@@ -1079,10 +1081,12 @@ EOD
             let card = cards[i];
             let frontContent = card.front || "";
             
-            imgCont.innerHTML = ""; audioCont.innerHTML = ""; frontTxt.innerHTML = ""; back1Preview.innerHTML = "";
+            imgCont.innerHTML = ""; audioCont.innerHTML = ""; frontTxt.innerHTML = ""; back1Preview.innerHTML = ""; frontAudioCont.innerHTML = "";
             backContentEl.innerHTML = getBackContentHTML(card);
             
             let isImageFront = false;
+            let isTextFront = false;
+            
             if (isUrl(frontContent)) {
                 if (/\.(jpeg|jpg|gif|png|svg|webp)(\?.*)?$/i.test(frontContent)) {
                     imgCont.innerHTML = `<img src="${frontContent}" alt="">`;
@@ -1091,9 +1095,27 @@ EOD
                     audioCont.innerHTML = createAudioButton(frontContent);
                 } else {
                     frontTxt.innerHTML = `<span>${frontContent.replace(/\\n/g, "<br>")}</span>`;
+                    isTextFront = true;
                 }
             } else {
                 frontTxt.innerHTML = `<span>${frontContent.replace(/\\n/g, "<br>")}</span>`;
+                isTextFront = true;
+            }
+            
+            // Add back1_audio button to front if it exists
+            if (card.back1_audio && isUrl(card.back1_audio)) {
+                const audioBtn = createAudioButton(card.back1_audio);
+                if (isImageFront) {
+                    // Audio over image - use overlay style
+                    frontAudioCont.innerHTML = audioBtn;
+                    frontAudioCont.className = 'ifc-front-audio-container audio-overlay';
+                } else if (isTextFront) {
+                    // Audio above text
+                    frontAudioCont.innerHTML = audioBtn;
+                    frontAudioCont.className = 'ifc-front-audio-container audio-above-text';
+                } else {
+                    frontAudioCont.innerHTML = "";
+                }
             }
             
             // Show back1 preview if enabled and front is image
@@ -1120,6 +1142,15 @@ EOD
                 if (audioEl) {
                     mainAudioBtn.onclick = (e) => { e.stopPropagation(); playSound(audioEl, mainAudioBtn); };
                     setTimeout(() => playSound(audioEl, mainAudioBtn), 300);
+                }
+            }
+            
+            // Setup front audio button
+            const frontAudioBtn = frontAudioCont.querySelector('.ifc-audio-play-btn');
+            if (frontAudioBtn) {
+                const audioEl = document.getElementById(frontAudioBtn.dataset.audioId);
+                if (audioEl) {
+                    frontAudioBtn.onclick = (e) => { e.stopPropagation(); playSound(audioEl, frontAudioBtn); };
                 }
             }
         }
@@ -1488,11 +1519,36 @@ EOD
 .ifc-content-wrapper { 
   display: flex; flex-direction: column; align-items: center; justify-content: center; 
   gap: 15px; width: 100%; height: 100%; overflow: hidden; padding: 15px; box-sizing: border-box;
+  position: relative;
+}
+
+.ifc-front-audio-container { 
+  display: none;
+}
+
+.ifc-front-audio-container.audio-overlay { 
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 10; display: flex; align-items: center; justify-content: center;
+}
+
+.ifc-front-audio-container.audio-overlay .ifc-audio-play-btn {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.8), rgba(245, 158, 11, 0.8));
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6);
+}
+
+.ifc-front-audio-container.audio-overlay .ifc-audio-play-btn:hover {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.95));
+}
+
+.ifc-front-audio-container.audio-above-text { 
+  display: flex; align-items: center; justify-content: center;
+  order: -1; width: 100%;
 }
 
 .ifc-image-container { 
   width: 100%; height: auto; max-height: 100%; display: flex; align-items: center; 
-  justify-content: center;
+  justify-content: center; position: relative;
 }
 
 .ifc-image-container img { 
