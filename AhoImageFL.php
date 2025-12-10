@@ -1118,7 +1118,8 @@ EOD
                 }
             }
             
-            // Show back1 preview if enabled (works for both image and text fronts)
+            // Show back1 preview in external container if toggle is enabled and back1 content exists
+            // The preview appears below the card to avoid clipping issues
             if (showBackOnFront && card.back1) {
                 back1Preview.innerHTML = `<span>${card.back1}</span>`;
                 back1Preview.style.display = "block";
@@ -1405,8 +1406,12 @@ EOD
   --ifc-confetti-duration: 4000ms;
 }
 
-/* CSS Reset for plugin isolation */
-.ifc-wrap * {
+/* CSS Reset for plugin isolation - only reset specific elements to avoid performance issues */
+.ifc-wrap button,
+.ifc-wrap input,
+.ifc-wrap select,
+.ifc-wrap div,
+.ifc-wrap span {
   box-sizing: border-box !important;
 }
 
@@ -1415,6 +1420,7 @@ EOD
 .ifc-wrap select {
   font-family: 'Poppins', sans-serif !important;
   line-height: normal !important;
+  margin: 0 !important;
 }
 
 /* Fixed dimensions for all SVG icons */
@@ -1434,11 +1440,11 @@ EOD
 .ifc-wrap { 
   max-width: 550px; margin: 30px auto; padding: 25px; font-family: 'Poppins', sans-serif; 
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  background-size: 200% 200%; animation: gradient-shift 15s ease infinite;
+  background-size: 200% 200%; animation: ifc-gradient-shift 15s ease infinite;
   border-radius: var(--ifc-radius); box-shadow: var(--ifc-shadow); position: relative; overflow: hidden;
 }
 
-@keyframes gradient-shift {
+@keyframes ifc-gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
@@ -1624,7 +1630,7 @@ EOD
   border: 1px solid var(--ifc-glass-border) !important;
   margin-top: 15px !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
-  animation: slide-down 0.3s ease-out !important;
+  animation: ifc-slide-down 0.3s ease-out !important;
   position: relative !important;
   z-index: 1 !important;
 }
@@ -1635,7 +1641,7 @@ EOD
   line-height: 1.5 !important;
 }
 
-@keyframes slide-down {
+@keyframes ifc-slide-down {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -1700,11 +1706,11 @@ EOD
 }
 
 .ifc-wrap .ifc-audio-play-btn.playing {
-  animation: audio-pulse 1.5s ease-in-out infinite !important;
+  animation: ifc-audio-pulse 1.5s ease-in-out infinite !important;
   box-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(251, 191, 36, 0.6) !important;
 }
 
-@keyframes audio-pulse {
+@keyframes ifc-audio-pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
   50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(251, 191, 36, 0.9), 0 0 50px rgba(251, 191, 36, 0.7); }
 }
@@ -1713,10 +1719,10 @@ EOD
 
 .ifc-back-content .ifc-back-row { 
   display: flex; flex-direction: column; align-items: center; justify-content: center; width: 95%; 
-  margin: 8px 0; font-size: 20px; gap: 10px; animation: slide-in 0.5s ease-out;
+  margin: 8px 0; font-size: 20px; gap: 10px; animation: ifc-slide-in 0.5s ease-out;
 }
 
-@keyframes slide-in {
+@keyframes ifc-slide-in {
   from { opacity: 0; transform: translateX(-20px); }
   to { opacity: 1; transform: translateX(0); }
 }
@@ -1850,10 +1856,10 @@ EOD
 
 .ifc-quiz-mode, .ifc-quiz-results { 
   padding: 20px; position: relative; z-index: 2; display: flex; flex-direction: column;
-  animation: fade-in 0.5s ease-out;
+  animation: ifc-fade-in 0.5s ease-out;
 }
 
-@keyframes fade-in {
+@keyframes ifc-fade-in {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -1887,10 +1893,10 @@ EOD
   border: 1px solid var(--ifc-glass-border); border-radius: var(--ifc-radius-sm); 
   padding: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); 
   z-index: 100; min-width: 220px; margin-top: 8px;
-  animation: dropdown-slide 0.3s ease-out;
+  animation: ifc-dropdown-slide 0.3s ease-out;
 }
 
-@keyframes dropdown-slide {
+@keyframes ifc-dropdown-slide {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
@@ -1937,7 +1943,7 @@ EOD
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
   font-weight: 600; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
   display: flex; align-items: center; gap: 12px; color: #fff;
-  opacity: 0; animation: option-appear 0.4s ease-out forwards;
+  opacity: 0; animation: ifc-option-appear 0.4s ease-out forwards;
 }
 
 .ifc-quiz-option:nth-child(1) { animation-delay: 0.1s; }
@@ -1945,7 +1951,7 @@ EOD
 .ifc-quiz-option:nth-child(3) { animation-delay: 0.3s; }
 .ifc-quiz-option:nth-child(4) { animation-delay: 0.4s; }
 
-@keyframes option-appear {
+@keyframes ifc-option-appear {
   from { opacity: 0; transform: translateY(20px) scale(0.9); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
@@ -1967,10 +1973,10 @@ EOD
 .ifc-quiz-option.correct { 
   border-color: var(--ifc-success) !important; 
   background: linear-gradient(135deg, rgba(74, 222, 128, 0.3), rgba(34, 197, 94, 0.3)) !important; 
-  color: #fff !important; animation: correct-bounce 0.6s ease-out;
+  color: #fff !important; animation: ifc-correct-bounce 0.6s ease-out;
 }
 
-@keyframes correct-bounce {
+@keyframes ifc-correct-bounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
 }
@@ -1978,10 +1984,10 @@ EOD
 .ifc-quiz-option.wrong { 
   border-color: var(--ifc-error); 
   background: linear-gradient(135deg, rgba(248, 113, 113, 0.3), rgba(239, 68, 68, 0.3)); 
-  color: #fff; animation: shake 0.5s ease-out;
+  color: #fff; animation: ifc-shake 0.5s ease-out;
 }
 
-@keyframes shake {
+@keyframes ifc-shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-10px); }
   75% { transform: translateX(10px); }
@@ -1994,9 +2000,9 @@ EOD
   opacity: 0.6;
 }
 
-.ifc-quiz-results { animation: results-appear 0.6s ease-out; }
+.ifc-quiz-results { animation: ifc-results-appear 0.6s ease-out; }
 
-@keyframes results-appear {
+@keyframes ifc-results-appear {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
 }
@@ -2040,7 +2046,7 @@ EOD
   -webkit-backdrop-filter: blur(4px); z-index: 10000;
 }
 
-.ifc-result-popup-content { animation: popup-scale 0.3s ease-out forwards; }
+.ifc-result-popup-content { animation: ifc-popup-scale 0.3s ease-out forwards; }
 
 .ifc-result-popup-icon { 
   font-size: 160px; line-height: 1; display: flex; align-items: center; 
@@ -2051,27 +2057,27 @@ EOD
 
 .ifc-result-popup.correct .ifc-result-popup-icon { 
   background: linear-gradient(135deg, var(--ifc-success), #22c55e); 
-  animation: popup-correct-icon 1.2s ease-out forwards;
+  animation: ifc-popup-correct-icon 1.2s ease-out forwards;
 }
 
 .ifc-result-popup.wrong .ifc-result-popup-icon { 
   background: linear-gradient(135deg, var(--ifc-error), #ef4444); 
-  animation: popup-wrong-icon 1.2s ease-out forwards;
+  animation: ifc-popup-wrong-icon 1.2s ease-out forwards;
 }
 
-@keyframes popup-scale { 
+@keyframes ifc-popup-scale { 
   from { transform: scale(0.5); opacity: 0; } 
   to { transform: scale(1); opacity: 1; } 
 }
 
-@keyframes popup-correct-icon { 
+@keyframes ifc-popup-correct-icon { 
   0% { transform: scale(0.5); opacity: 0; } 
   30% { transform: scale(1.2); opacity: 1; } 
   50% { transform: scale(1); } 
   100% { opacity: 0; transform: scale(1.5); } 
 }
 
-@keyframes popup-wrong-icon { 
+@keyframes ifc-popup-wrong-icon { 
   0%, 20%, 40%, 60%, 80%, 100% { transform: translateX(0); } 
   10%, 50% { transform: translateX(-15px); } 
   30%, 70% { transform: translateX(15px); } 
@@ -2089,10 +2095,10 @@ EOD
 .confetti-piece { 
   position: absolute; width: 10px; height: 10px; 
   background: var(--color); opacity: 0; 
-  animation: confetti-fall var(--duration) ease-out forwards;
+  animation: ifc-confetti-fall var(--duration) ease-out forwards;
 }
 
-@keyframes confetti-fall {
+@keyframes ifc-confetti-fall {
   0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
   100% { transform: translate3d(0, 1000px, 0) rotate(720deg); opacity: 0; }
 }
